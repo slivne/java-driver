@@ -2,37 +2,6 @@ schedules:
   commit:
     # Run short suite on commit with enough C* versions to get full protocol version coverage.
     schedule: per_commit
-    matrix:
-      exclude:
-        # Exclude all java 7 builds
-        - java: oraclejdk7
-        # Exclude java6 with all versions except latest
-        - java: openjdk6
-          cassandra: ['1.2', '2.0', '2.1', '2.2', '3.0']
-    env_vars: |
-      TEST_GROUP="short"
-    disable_commit_status: true
-    disable_pull_requests: true
-    notify:
-      slack: java-driver-dev-bots
-  nightly:
-    # Run full suite nightly on change for all primary branches if they have changes.
-    schedule: nightly
-    branches:
-      # regex matches primary branch format (2.1, 3.x, 3.0.x, 3.1.x, etc).
-      include: ["/\\d+(\\.[\\dx]+)+/"]
-    env_vars: |
-      TEST_GROUP="long"
-    disable_commit_status: true
-    disable_pull_requests: true
-    notify:
-      slack: java-driver-dev-bots
-  adhoc:
-    # Adhoc job for non-primary braches that doesn't have a schedule but may be used to run all configs.
-    schedule: adhoc
-    branches:
-      # regex matches primary branch format (2.1, 3.x, 3.0.x, 3.1.x, etc).
-      exclude: ["/\\d+(\\.[\\dx]+)+/"]
     env_vars: |
       TEST_GROUP="long"
     disable_commit_status: true
@@ -40,9 +9,8 @@ schedules:
     notify:
       slack: java-driver-dev-bots
 java:
-  - openjdk6
-  - oraclejdk7
-  - oraclejdk8
+  - oraclejdk9
+  - oraclejdk10
 os:
   - ubuntu/trusty64/m3.large
 cassandra:
