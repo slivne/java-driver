@@ -15,6 +15,7 @@
  */
 package com.datastax.oss.driver.osgi;
 
+import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
@@ -22,6 +23,7 @@ import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 import org.ops4j.pax.exam.options.CompositeOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
+import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.ops4j.pax.exam.util.PathUtils;
 
 public class BundleOptions {
@@ -45,17 +47,31 @@ public class BundleOptions {
             testBundles());
   }
 
-  public static MavenArtifactProvisionOption driverCoreBundle() {
-    return mavenBundle("com.datastax.oss", "java-driver-core", getVersion("project.version"));
+  public static UrlProvisionOption driverCoreBundle() {
+    return bundle(
+        "reference:file:"
+            + PathUtils.getBaseDir()
+            + "/../core/target/java-driver-core-"
+            + getVersion("project.version")
+            + ".jar");
   }
 
-  public static MavenArtifactProvisionOption driverQueryBuilderBundle() {
-    return mavenBundle(
-        "com.datastax.oss", "java-driver-query-builder", getVersion("project.version"));
+  public static UrlProvisionOption driverQueryBuilderBundle() {
+    return bundle(
+        "reference:file:"
+            + PathUtils.getBaseDir()
+            + "/../query-builder/target/java-driver-query-builder-"
+            + getVersion("project.version")
+            + ".jar");
   }
 
-  public static MavenArtifactProvisionOption driverTestInfraBundle() {
-    return mavenBundle("com.datastax.oss", "java-driver-test-infra", getVersion("project.version"));
+  public static UrlProvisionOption driverTestInfraBundle() {
+    return bundle(
+        "reference:file:"
+            + PathUtils.getBaseDir()
+            + "/../test-infra/target/java-driver-test-infra-"
+            + getVersion("project.version")
+            + ".jar");
   }
 
   public static CompositeOption testBundles() {
