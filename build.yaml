@@ -11,9 +11,16 @@ build:
   - script: |
       git clone --depth 1 https://github.com/datastax/native-protocol.git
       pushd native-protocol
+      git checkout java1761
       mvn install -Dmaven.javadoc.skip=true -B -V
       popd
       rm -rf native-protocol
+      git clone --depth 1 https://github.com/datastax/java-driver-shaded-guava.git
+      pushd java-driver-shaded-guava
+      git checkout java1761
+      mvn install -Dmaven.javadoc.skip=true -B -V
+      popd
+      rm -rf java-driver-shaded-guava
   - type: maven
     version: 3.2.5
     goals: verify
