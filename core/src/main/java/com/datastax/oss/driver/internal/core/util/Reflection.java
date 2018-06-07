@@ -45,11 +45,10 @@ public class Reflection {
    *
    * @return null if the class does not exist.
    */
-  public static Class<?> loadClass(String className) {
+  public static Class<?> loadClass(ClassLoader classLoader, String className) {
     try {
-      ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-      if (contextClassLoader != null) {
-        return Class.forName(className, true, contextClassLoader);
+      if (classLoader != null) {
+        return Class.forName(className, true, classLoader);
       } else {
         return Class.forName(className);
       }
@@ -178,13 +177,13 @@ public class Reflection {
     Class<?> clazz = null;
     if (className.contains(".")) {
       LOG.debug("Building from fully-qualified name {}", className);
-      clazz = loadClass(className);
+      clazz = loadClass(expectedSuperType.getClassLoader(), className);
     } else {
       LOG.debug("Building from unqualified name {}", className);
       for (String defaultPackage : defaultPackages) {
         String qualifiedClassName = defaultPackage + "." + className;
         LOG.debug("Trying with default package {}", qualifiedClassName);
-        clazz = loadClass(qualifiedClassName);
+        clazz = loadClass(expectedSuperType.getClassLoader(), qualifiedClassName);
         if (clazz != null) {
           break;
         }

@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>java-driver-core</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
 
   <name>DataStax Java driver for Apache Cassandra(R) - core</name>
 
@@ -74,6 +74,11 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jctools</groupId>
+      <artifactId>jctools-core</artifactId>
+      <version>2.1.2</version>
     </dependency>
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
@@ -152,6 +157,25 @@
               <value>com.datastax.oss.driver.DriverRunListener</value>
             </property>
           </properties>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>com.datastax.oss.driver.core</Bundle-SymbolicName>
+            <!-- Don't include JNR packages since some JNR modules are not OSGi bundles -->
+            <Import-Package>!jnr.*,*</Import-Package>
+            <Export-Package>com.datastax.oss.driver.*.core.*</Export-Package>
+          </instructions>
+          <!--
+          Prevent customized manifest entries from the project's maven-jar-plugin configuration from being read, see
+          http://apache-felix.18485.x6.nabble.com/how-lt-manifestLocation-gt-is-used-in-maven-bundle-plugin-td4835566.html
+          -->
+          <archive>
+            <forced>true</forced>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
