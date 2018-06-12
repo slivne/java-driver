@@ -191,6 +191,8 @@
             <configuration>
               <manifestLocation>${project.build.outputDirectory}/META-INF</manifestLocation>
               <instructions>
+                <!-- Allow importing code from other packages (so reflection-based loading of policies works) -->
+                <DynamicImport-Package>*</DynamicImport-Package>
                 <!-- Don't include JNR packages since some JNR modules are not OSGi bundles, jctools because its shaded.
                 Import sun.misc as jctools does this. -->
                 <Import-Package>!jnr.*,!org.jctools.*,sun.misc;resolution:=optional,*</Import-Package>
@@ -217,6 +219,7 @@
               <manifestLocation>${project.build.directory}/META-INF-shaded</manifestLocation>
               <instructions>
                 <Bundle-Name>DataStax Java driver for Apache Cassandra(R) - core netty shaded</Bundle-Name>
+                <DynamicImport-Package>*</DynamicImport-Package>
                 <!-- Don't include netty since it will be shaded, import javax.security.cert as needed by netty ssl -->
                 <Import-Package>!jnr.*,!org.jctools.*,sun.misc;resolution:=optional,!io.netty.*,javax.security.cert,*
                 </Import-Package>
