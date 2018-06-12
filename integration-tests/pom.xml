@@ -126,7 +126,6 @@
             <guava.version>${guava.version}</guava.version>
             <hdrhistogram.version>${hdrhistogram.version}</hdrhistogram.version>
             <jackson.version>${jackson.version}</jackson.version>
-            <jctools.version>${jctools.version}</jctools.version>
             <logback.version>${logback.version}</logback.version>
             <lz4.version>${lz4.version}</lz4.version>
             <metrics.version>${metrics.version}</metrics.version>
@@ -151,7 +150,6 @@
             <guava.version>${guava.version}</guava.version>
             <hdrhistogram.version>${hdrhistogram.version}</hdrhistogram.version>
             <jackson.version>${jackson.version}</jackson.version>
-            <jctools.version>${jctools.version}</jctools.version>
             <logback.version>${logback.version}</logback.version>
             <lz4.version>${lz4.version}</lz4.version>
             <metrics.version>${metrics.version}</metrics.version>

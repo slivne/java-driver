@@ -40,7 +40,6 @@ public class BundleOptions {
             mavenBundle("com.typesafe", "config", getVersion("config.version")),
             mavenBundle(
                 "com.datastax.oss", "native-protocol", getVersion("native-protocol.version")),
-            mavenBundle("org.jctools", "jctools-core", getVersion("jctools.version")),
             logbackBundles(),
             systemProperty("logback.configurationFile")
                 .value("file:" + PathUtils.getBaseDir() + "/src/test/resources/logback-test.xml"),
