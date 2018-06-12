@@ -177,13 +177,13 @@ public class Reflection {
     Class<?> clazz = null;
     if (className.contains(".")) {
       LOG.debug("Building from fully-qualified name {}", className);
-      clazz = loadClass(expectedSuperType.getClassLoader(), className);
+      clazz = loadClass(null, className);
     } else {
       LOG.debug("Building from unqualified name {}", className);
       for (String defaultPackage : defaultPackages) {
         String qualifiedClassName = defaultPackage + "." + className;
         LOG.debug("Trying with default package {}", qualifiedClassName);
-        clazz = loadClass(expectedSuperType.getClassLoader(), qualifiedClassName);
+        clazz = loadClass(null, qualifiedClassName);
         if (clazz != null) {
           break;
         }
