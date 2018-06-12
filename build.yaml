@@ -9,7 +9,7 @@ cassandra:
   - '3.11'
 build:
   - script: |
-      git clone --depth 1 https://github.com/datastax/native-protocol.git -b java1761
+      git clone --depth 1 https://github.com/datastax/native-protocol.git
       pushd native-protocol
       mvn install -Dmaven.javadoc.skip=true -B -V
       popd
