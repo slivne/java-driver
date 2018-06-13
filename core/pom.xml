@@ -216,7 +216,7 @@
               <goal>manifest</goal>
             </goals>
             <configuration>
-              <manifestLocation>${project.build.directory}/META-INF-shaded</manifestLocation>
+              <manifestLocation>${project.build.directory}/classes/META-INF-shaded</manifestLocation>
               <instructions>
                 <Bundle-Name>DataStax Java driver for Apache Cassandra(R) - core netty shaded</Bundle-Name>
                 <DynamicImport-Package>*</DynamicImport-Package>
