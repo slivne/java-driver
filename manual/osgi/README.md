@@ -59,7 +59,7 @@ Because native calls are not available, it is also normal to see the following l
     [main] INFO - Could not access native clock (see debug logs for details), falling back to Java system clock
 
 
-[driver configuration]: ../manual/core/configuration
+[driver configuration]: ../core/configuration
 [OSGi]:https://www.osgi.org
 [JNR]: https://github.com/jnr/jnr-ffi
 [withClassLoader()]: https://docs.datastax.com/en/drivers/java/4.0/com/datastax/oss/driver/api/core/session/SessionBuilder.html#withClassLoader-java.lang.ClassLoader-
