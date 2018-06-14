@@ -23,11 +23,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.options;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.session.SessionBuilder;
 import com.datastax.oss.driver.api.testinfra.ccm.CustomCcmRule;
 import com.datastax.oss.driver.api.testinfra.session.SessionUtils;
 import com.datastax.oss.driver.categories.IsolatedTests;
+import com.datastax.oss.driver.internal.testinfra.session.TestConfigLoader;
 import com.google.common.collect.ObjectArrays;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -65,8 +68,15 @@ public abstract class OsgiBaseIT {
    * an OSGi container.
    */
   @Test
+  @SuppressWarnings("unchecked")
   public void should_connect_and_query() {
-    try (CqlSession session = SessionUtils.newSession(ccmRule, sessionOptions())) {
+    SessionBuilder<CqlSessionBuilder, CqlSession> builder =
+        SessionUtils.baseBuilder()
+            .addContactPoints(ccmRule.getContactPoints())
+            // use the driver's ClassLoader instead of the OSGI application thread's.
+            .withClassLoader(CqlSession.class.getClassLoader())
+            .withConfigLoader(new TestConfigLoader(sessionOptions()));
+    try (CqlSession session = builder.build()) {
       ResultSet result = session.execute(selectFrom("system", "local").all().build());
 
       assertThat(result.getAvailableWithoutFetching()).isEqualTo(1);
