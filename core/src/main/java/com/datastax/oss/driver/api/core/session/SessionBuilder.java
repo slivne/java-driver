@@ -224,9 +224,13 @@ public abstract class SessionBuilder<SelfT extends SessionBuilder, SessionT> {
   }
 
   /**
-   * The {@link ClassLoader} to use to reflectively load class names defined in configuration. If
-   * null, the driver attempts to use {@link Thread#getContextClassLoader()} of the current thread
-   * or {@link com.datastax.oss.driver.internal.core.util.Reflection}'s {@link ClassLoader}.
+   * The {@link ClassLoader} to use to reflectively load class names defined in configuration.
+   *
+   * <p>This is typically only needed when using OSGi or other in environments where there are
+   * complex class loading requirements.
+   *
+   * <p>If null, the driver attempts to use {@link Thread#getContextClassLoader()} of the current
+   * thread or the same {@link ClassLoader} that loaded the core driver classes.
    */
   public SelfT withClassLoader(ClassLoader classLoader) {
     this.classLoader = classLoader;

@@ -42,6 +42,11 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
 
+/**
+ * Tests the capability of using the driver in an OSGi environment. Note that this relies on
+ * relative locations of jars in the target directory of their respective modules. It is therefore
+ * required that you at least run {@code mvn package} before running these tests.
+ */
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
 @Category(IsolatedTests.class)
