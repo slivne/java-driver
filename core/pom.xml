@@ -193,9 +193,12 @@
               <instructions>
                 <!-- Allow importing code from other packages (so reflection-based loading of policies works) -->
                 <DynamicImport-Package>*</DynamicImport-Package>
-                <!-- Don't include JNR packages since some JNR modules are not OSGi bundles, jctools because its shaded.
-                Import sun.misc as jctools does this. -->
-                <Import-Package>!jnr.*,!org.jctools.*,sun.misc;resolution:=optional,*</Import-Package>
+                <!-- Don't include JNR packages since some JNR modules are not OSGi bundles,
+                     jcip because its not an OSGi bundle, jctools because its shaded.
+                     Import sun.misc as jctools does this. -->
+                <Import-Package>
+                  !net.jcip.annotations,!jnr.*,!org.jctools.*,sun.misc;resolution:=optional,*
+                </Import-Package>
                 <!-- Explicitly declare shaded jctools packages since this isn't covered by shade plugin -->
                 <Export-Package>
                   com.datastax.oss.driver.*.core.*,
@@ -221,7 +224,8 @@
                 <Bundle-Name>DataStax Java driver for Apache Cassandra(R) - core netty shaded</Bundle-Name>
                 <DynamicImport-Package>*</DynamicImport-Package>
                 <!-- Don't include netty since it will be shaded, import javax.security.cert as needed by netty ssl -->
-                <Import-Package>!jnr.*,!org.jctools.*,sun.misc;resolution:=optional,!io.netty.*,javax.security.cert,*
+                <Import-Package>
+                  !net.jcip.annotations,!jnr.*,!org.jctools.*,sun.misc;resolution:=optional,!io.netty.*,javax.security.cert,*
                 </Import-Package>
                 <Export-Package>
                   com.datastax.oss.driver.*.core.*,

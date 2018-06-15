@@ -65,6 +65,7 @@
         <configuration>
           <instructions>
             <Bundle-SymbolicName>com.datastax.oss.driver.querybuilder</Bundle-SymbolicName>
+            <Import-Package>!net.jcip.annotations,*</Import-Package>
           </instructions>
         </configuration>
       </plugin>
