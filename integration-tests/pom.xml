@@ -164,6 +164,8 @@
             <slf4j.version>${slf4j.version}</slf4j.version>
             <snappy.version>${snappy.version}</snappy.version>
           </systemPropertyVariables>
+          <!-- rerun failing tests an additional time as tests may be flaky -->
+          <rerunFailingTestsCount>1</rerunFailingTestsCount>
         </configuration>
         <executions>
           <execution>
