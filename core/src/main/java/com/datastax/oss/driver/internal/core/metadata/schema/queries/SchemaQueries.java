@@ -121,6 +121,12 @@ public abstract class SchemaQueries {
 
   protected abstract Optional<String> selectAggregatesQuery();
 
+  protected abstract Optional<String> selectVirtualKeyspaces();
+
+  protected abstract Optional<String> selectVirtualTables();
+
+  protected abstract Optional<String> selectVirtualColumns();
+
   public CompletionStage<SchemaRows> execute() {
     RunOrSchedule.on(adminExecutor, this::executeOnAdminExecutor);
     return schemaRowsFuture;
@@ -143,6 +149,12 @@ public abstract class SchemaQueries {
         .ifPresent(select -> query(select + whereClause, schemaRowsBuilder::withFunctions));
     selectAggregatesQuery()
         .ifPresent(select -> query(select + whereClause, schemaRowsBuilder::withAggregates));
+    selectVirtualKeyspaces()
+        .ifPresent(select -> query(select + whereClause, schemaRowsBuilder::withVirtualKeyspaces));
+    selectVirtualTables()
+        .ifPresent(select -> query(select + whereClause, schemaRowsBuilder::withVirtualTables));
+    selectVirtualColumns()
+        .ifPresent(select -> query(select + whereClause, schemaRowsBuilder::withVirtualColumns));
   }
 
   private void query(

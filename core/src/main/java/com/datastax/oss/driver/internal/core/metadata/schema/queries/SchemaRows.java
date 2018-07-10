@@ -41,21 +41,27 @@ public class SchemaRows {
   public final boolean isCassandraV3;
   public final CompletableFuture<Metadata> refreshFuture;
   public final List<AdminRow> keyspaces;
+  public final List<AdminRow> virtualKeyspaces;
   public final Multimap<CqlIdentifier, AdminRow> tables;
+  public final Multimap<CqlIdentifier, AdminRow> virtualTables;
   public final Multimap<CqlIdentifier, AdminRow> views;
   public final Multimap<CqlIdentifier, AdminRow> types;
   public final Multimap<CqlIdentifier, AdminRow> functions;
   public final Multimap<CqlIdentifier, AdminRow> aggregates;
   public final Map<CqlIdentifier, Multimap<CqlIdentifier, AdminRow>> columns;
+  public final Map<CqlIdentifier, Multimap<CqlIdentifier, AdminRow>> virtualColumns;
   public final Map<CqlIdentifier, Multimap<CqlIdentifier, AdminRow>> indexes;
 
   private SchemaRows(
       boolean isCassandraV3,
       CompletableFuture<Metadata> refreshFuture,
       List<AdminRow> keyspaces,
+      List<AdminRow> virtualKeyspaces,
       Multimap<CqlIdentifier, AdminRow> tables,
+      Multimap<CqlIdentifier, AdminRow> virtualTables,
       Multimap<CqlIdentifier, AdminRow> views,
       Map<CqlIdentifier, Multimap<CqlIdentifier, AdminRow>> columns,
+      Map<CqlIdentifier, Multimap<CqlIdentifier, AdminRow>> virtualColumns,
       Map<CqlIdentifier, Multimap<CqlIdentifier, AdminRow>> indexes,
       Multimap<CqlIdentifier, AdminRow> types,
       Multimap<CqlIdentifier, AdminRow> functions,
@@ -63,9 +69,12 @@ public class SchemaRows {
     this.isCassandraV3 = isCassandraV3;
     this.refreshFuture = refreshFuture;
     this.keyspaces = keyspaces;
+    this.virtualKeyspaces = virtualKeyspaces;
     this.tables = tables;
+    this.virtualTables = virtualTables;
     this.views = views;
     this.columns = columns;
+    this.virtualColumns = virtualColumns;
     this.indexes = indexes;
     this.types = types;
     this.functions = functions;
@@ -80,7 +89,10 @@ public class SchemaRows {
     private final String tableNameColumn;
     private final String logPrefix;
     private final ImmutableList.Builder<AdminRow> keyspacesBuilder = ImmutableList.builder();
+    private final ImmutableList.Builder<AdminRow> virtualKeyspacesBuilder = ImmutableList.builder();
     private final ImmutableMultimap.Builder<CqlIdentifier, AdminRow> tablesBuilder =
+        ImmutableListMultimap.builder();
+    private final ImmutableMultimap.Builder<CqlIdentifier, AdminRow> virtualTablesBuilder =
         ImmutableListMultimap.builder();
     private final ImmutableMultimap.Builder<CqlIdentifier, AdminRow> viewsBuilder =
         ImmutableListMultimap.builder();
@@ -92,6 +104,8 @@ public class SchemaRows {
         ImmutableListMultimap.builder();
     private final Map<CqlIdentifier, ImmutableMultimap.Builder<CqlIdentifier, AdminRow>>
         columnsBuilders = new LinkedHashMap<>();
+    private final Map<CqlIdentifier, ImmutableMultimap.Builder<CqlIdentifier, AdminRow>>
+        virtualColumnsBuilders = new LinkedHashMap<>();
     private final Map<CqlIdentifier, ImmutableMultimap.Builder<CqlIdentifier, AdminRow>>
         indexesBuilders = new LinkedHashMap<>();
 
@@ -108,9 +122,21 @@ public class SchemaRows {
       return this;
     }
 
+    public Builder withVirtualKeyspaces(Iterable<AdminRow> rows) {
+      virtualKeyspacesBuilder.addAll(rows);
+      return this;
+    }
+
     public Builder withTables(Iterable<AdminRow> rows) {
       for (AdminRow row : rows) {
         putByKeyspace(row, tablesBuilder);
+      }
+      return this;
+    }
+
+    public Builder withVirtualTables(Iterable<AdminRow> rows) {
+      for (AdminRow row : rows) {
+        putByKeyspace(row, virtualTablesBuilder);
       }
       return this;
     }
@@ -146,6 +172,13 @@ public class SchemaRows {
     public Builder withColumns(Iterable<AdminRow> rows) {
       for (AdminRow row : rows) {
         putByKeyspaceAndTable(row, columnsBuilders);
+      }
+      return this;
+    }
+
+    public Builder withVirtualColumns(Iterable<AdminRow> rows) {
+      for (AdminRow row : rows) {
+        putByKeyspaceAndTable(row, virtualColumnsBuilders);
       }
       return this;
     }
@@ -189,9 +222,12 @@ public class SchemaRows {
           isCassandraV3,
           refreshFuture,
           keyspacesBuilder.build(),
+          virtualKeyspacesBuilder.build(),
           tablesBuilder.build(),
+          virtualTablesBuilder.build(),
           viewsBuilder.build(),
           build(columnsBuilders),
+          build(virtualColumnsBuilders),
           build(indexesBuilders),
           typesBuilder.build(),
           functionsBuilder.build(),

@@ -31,6 +31,7 @@ import com.datastax.oss.driver.internal.core.metadata.schema.refresh.SchemaRefre
 import com.datastax.oss.driver.internal.core.util.NanoTime;
 import com.datastax.oss.driver.shaded.guava.common.base.MoreObjects;
 import com.datastax.oss.driver.shaded.guava.common.collect.ImmutableMap;
+import java.util.Collections;
 import java.util.Map;
 import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
@@ -73,7 +74,11 @@ public class SchemaParser {
   public SchemaRefresh parse() {
     ImmutableMap.Builder<CqlIdentifier, KeyspaceMetadata> keyspacesBuilder = ImmutableMap.builder();
     for (AdminRow row : rows.keyspaces) {
-      KeyspaceMetadata keyspace = parseKeyspace(row);
+      KeyspaceMetadata keyspace = parseKeyspace(row, false);
+      keyspacesBuilder.put(keyspace.getName(), keyspace);
+    }
+    for (AdminRow row : rows.virtualKeyspaces) {
+      KeyspaceMetadata keyspace = parseKeyspace(row, true);
       keyspacesBuilder.put(keyspace.getName(), keyspace);
     }
     SchemaRefresh refresh = new SchemaRefresh(keyspacesBuilder.build());
@@ -81,7 +86,7 @@ public class SchemaParser {
     return refresh;
   }
 
-  protected KeyspaceMetadata parseKeyspace(AdminRow keyspaceRow) {
+  protected KeyspaceMetadata parseKeyspace(AdminRow keyspaceRow, boolean isVirtual) {
 
     // Cassandra <= 2.2
     // CREATE TABLE system.schema_keyspaces (
@@ -111,6 +116,8 @@ public class SchemaParser {
               .putAll(strategyOptions)
               .put("class", strategyClass)
               .build();
+    } else if (isVirtual) {
+      replicationOptions = Collections.emptyMap();
     } else {
       replicationOptions = keyspaceRow.getMapOfStringToString("replication");
     }
@@ -119,42 +126,54 @@ public class SchemaParser {
         userDefinedTypeParser.parse(rows.types.get(keyspaceId), keyspaceId);
 
     ImmutableMap.Builder<CqlIdentifier, TableMetadata> tablesBuilder = ImmutableMap.builder();
-    for (AdminRow tableRow : rows.tables.get(keyspaceId)) {
-      TableMetadata table = tableParser.parseTable(tableRow, keyspaceId, types);
-      if (table != null) {
-        tablesBuilder.put(table.getName(), table);
-      }
-    }
-
     ImmutableMap.Builder<CqlIdentifier, ViewMetadata> viewsBuilder = ImmutableMap.builder();
-    for (AdminRow viewRow : rows.views.get(keyspaceId)) {
-      ViewMetadata view = viewParser.parseView(viewRow, keyspaceId, types);
-      if (view != null) {
-        viewsBuilder.put(view.getName(), view);
-      }
-    }
-
     ImmutableMap.Builder<FunctionSignature, FunctionMetadata> functionsBuilder =
         ImmutableMap.builder();
-    for (AdminRow functionRow : rows.functions.get(keyspaceId)) {
-      FunctionMetadata function = functionParser.parseFunction(functionRow, keyspaceId, types);
-      if (function != null) {
-        functionsBuilder.put(function.getSignature(), function);
-      }
-    }
 
     ImmutableMap.Builder<FunctionSignature, AggregateMetadata> aggregatesBuilder =
         ImmutableMap.builder();
-    for (AdminRow aggregateRow : rows.aggregates.get(keyspaceId)) {
-      AggregateMetadata aggregate = aggregateParser.parseAggregate(aggregateRow, keyspaceId, types);
-      if (aggregate != null) {
-        aggregatesBuilder.put(aggregate.getSignature(), aggregate);
+    if (!isVirtual) {
+      for (AdminRow tableRow : rows.tables.get(keyspaceId)) {
+        TableMetadata table = tableParser.parseTable(tableRow, keyspaceId, types);
+        if (table != null) {
+          tablesBuilder.put(table.getName(), table);
+        }
+      }
+
+      for (AdminRow viewRow : rows.views.get(keyspaceId)) {
+        ViewMetadata view = viewParser.parseView(viewRow, keyspaceId, types);
+        if (view != null) {
+          viewsBuilder.put(view.getName(), view);
+        }
+      }
+
+      for (AdminRow functionRow : rows.functions.get(keyspaceId)) {
+        FunctionMetadata function = functionParser.parseFunction(functionRow, keyspaceId, types);
+        if (function != null) {
+          functionsBuilder.put(function.getSignature(), function);
+        }
+      }
+
+      for (AdminRow aggregateRow : rows.aggregates.get(keyspaceId)) {
+        AggregateMetadata aggregate =
+            aggregateParser.parseAggregate(aggregateRow, keyspaceId, types);
+        if (aggregate != null) {
+          aggregatesBuilder.put(aggregate.getSignature(), aggregate);
+        }
+      }
+    } else {
+      for (AdminRow tableRow : rows.virtualTables.get(keyspaceId)) {
+        TableMetadata table = tableParser.parseVirtualTable(tableRow, keyspaceId, types);
+        if (table != null) {
+          tablesBuilder.put(table.getName(), table);
+        }
       }
     }
 
     return new DefaultKeyspaceMetadata(
         keyspaceId,
         durableWrites,
+        isVirtual,
         replicationOptions,
         types,
         tablesBuilder.build(),

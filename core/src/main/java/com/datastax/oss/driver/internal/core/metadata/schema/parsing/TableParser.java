@@ -226,6 +226,50 @@ class TableParser extends RelationParser {
         indexesBuilder.build());
   }
 
+  TableMetadata parseVirtualTable(
+      AdminRow tableRow, CqlIdentifier keyspaceId, Map<CqlIdentifier, UserDefinedType> userTypes) {
+
+    CqlIdentifier tableId =
+        CqlIdentifier.fromInternal(
+            tableRow.getString(rows.isCassandraV3 ? "table_name" : "columnfamily_name"));
+
+    List<RawColumn> rawColumns =
+        RawColumn.toRawColumns(
+            rows.virtualColumns.getOrDefault(keyspaceId, ImmutableMultimap.of()).get(tableId),
+            keyspaceId,
+            userTypes);
+    if (rawColumns.isEmpty()) {
+      LOG.warn(
+          "[{}] Processing TABLE refresh for {}.{} but found no matching rows, skipping",
+          logPrefix,
+          keyspaceId,
+          tableId);
+      return null;
+    }
+
+    Collections.sort(rawColumns);
+    ImmutableMap.Builder<CqlIdentifier, ColumnMetadata> allColumnsBuilder = ImmutableMap.builder();
+
+    for (RawColumn raw : rawColumns) {
+      DataType dataType = dataTypeParser.parse(keyspaceId, raw.dataType, userTypes, context);
+      ColumnMetadata column =
+          new DefaultColumnMetadata(
+              keyspaceId, tableId, raw.name, dataType, raw.kind == RawColumn.Kind.STATIC);
+      allColumnsBuilder.put(column.getName(), column);
+    }
+
+    return new DefaultTableMetadata(
+        keyspaceId,
+        tableId,
+        new UUID(0L, 0L),
+        false,
+        Collections.emptyList(),
+        Collections.emptyMap(),
+        allColumnsBuilder.build(),
+        Collections.emptyMap(),
+        Collections.emptyMap());
+  }
+
   // Upon migration from thrift to CQL, we internally create a pair of surrogate clustering/regular
   // columns for compact static tables. These columns shouldn't be exposed to the user but are
   // currently returned by C*. We also need to remove the static keyword for all other columns in
