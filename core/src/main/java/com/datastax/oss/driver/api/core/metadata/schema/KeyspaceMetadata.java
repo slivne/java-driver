@@ -195,6 +195,9 @@ public interface KeyspaceMetadata extends Describable {
   @NonNull
   @Override
   default String describe(boolean pretty) {
+    if (isVirtual()) {
+      return "";
+    }
     ScriptBuilder builder =
         new ScriptBuilder(pretty)
             .append("CREATE KEYSPACE ")
@@ -222,6 +225,9 @@ public interface KeyspaceMetadata extends Describable {
   @NonNull
   @Override
   default String describeWithChildren(boolean pretty) {
+    if (isVirtual()) {
+      return "";
+    }
     String createKeyspace = describe(pretty);
     ScriptBuilder builder = new ScriptBuilder(pretty).append(createKeyspace);
 
