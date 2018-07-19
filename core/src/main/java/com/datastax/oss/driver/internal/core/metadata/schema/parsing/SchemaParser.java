@@ -86,7 +86,7 @@ public class SchemaParser {
     return refresh;
   }
 
-  protected KeyspaceMetadata parseKeyspace(AdminRow keyspaceRow, boolean isVirtual) {
+  protected KeyspaceMetadata parseKeyspace(AdminRow keyspaceRow, boolean virtual) {
 
     // Cassandra <= 2.2
     // CREATE TABLE system.schema_keyspaces (
@@ -116,7 +116,7 @@ public class SchemaParser {
               .putAll(strategyOptions)
               .put("class", strategyClass)
               .build();
-    } else if (isVirtual) {
+    } else if (virtual) {
       replicationOptions = Collections.emptyMap();
     } else {
       replicationOptions = keyspaceRow.getMapOfStringToString("replication");
@@ -132,7 +132,7 @@ public class SchemaParser {
 
     ImmutableMap.Builder<FunctionSignature, AggregateMetadata> aggregatesBuilder =
         ImmutableMap.builder();
-    if (!isVirtual) {
+    if (!virtual) {
       for (AdminRow tableRow : rows.tables.get(keyspaceId)) {
         TableMetadata table = tableParser.parseTable(tableRow, keyspaceId, types);
         if (table != null) {
@@ -173,7 +173,7 @@ public class SchemaParser {
     return new DefaultKeyspaceMetadata(
         keyspaceId,
         durableWrites,
-        isVirtual,
+        virtual,
         replicationOptions,
         types,
         tablesBuilder.build(),
