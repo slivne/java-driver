@@ -1,8 +1,45 @@
 ## Changelog
 
-### 3.6.0 (In progress)
+### 3.7.0 (In progress)
+
+- [improvement] JAVA-2025: Include exception message in Abstract\*Codec.accepts(null).
+- [improvement] JAVA-1980: Use covariant return types in RemoteEndpointAwareJdkSSLOptions.Builder methods.
+- [documentation] JAVA-2062: Document frozen collection preference with Mapper.
+- [bug] JAVA-2071: Fix NPE in ArrayBackedRow.toString().
+- [bug] JAVA-2070: Call onRemove instead of onDown when rack and/or DC information changes for a host.
+- [improvement] JAVA-1256: Log parameters of BuiltStatement in QueryLogger.
+- [documentation] JAVA-2074: Document preference for LZ4 over Snappy.
+- [bug] JAVA-1612: Include netty-common jar in binary tarball.
+- [improvement] JAVA-2003: Simplify CBUtil internal API to improve performance.
+- [improvement] JAVA-2002: Reimplement TypeCodec.accepts to improve performance.
+- [documentation] JAVA-2041: Deprecate cross-DC failover in DCAwareRoundRobinPolicy.
+- [documentation] JAVA-1159: Document workaround for using tuple with udt field in Mapper.
+- [documentation] JAVA-1964: Complete remaining "Coming Soon" sections in docs.
+
+
+### 3.6.0
 
 - [improvement] JAVA-1394: Add request-queue-depth metric.
+- [improvement] JAVA-1857: Add Statement.setHost.
+- [bug] JAVA-1920: Use nanosecond precision in LocalTimeCodec#format().
+- [bug] JAVA-1794: Driver tries to create a connection array of size -1.
+- [new feature] JAVA-1899: Support virtual tables.
+- [bug] JAVA-1908: TableMetadata.asCQLQuery does not add table option 'memtable_flush_period_in_ms' in the generated query.
+- [bug] JAVA-1924: StatementWrapper setters should return the wrapping statement.
+- [new feature] JAVA-1532: Add Codec support for Java 8's LocalDateTime and ZoneId.
+- [improvement] JAVA-1786: Use Google code formatter.
+- [bug] JAVA-1871: Change LOCAL\_SERIAL.isDCLocal() to return true.
+- [documentation] JAVA-1902: Clarify unavailable & request error in DefaultRetryPolicy javadoc.
+- [new feature] JAVA-1903: Add WhiteListPolicy.ofHosts.
+- [bug] JAVA-1928: Fix GuavaCompatibility for Guava 26.
+- [bug] JAVA-1935: Add null check in QueryConsistencyException.getHost.
+- [improvement] JAVA-1771: Send driver name and version in STARTUP message.
+- [improvement] JAVA-1388: Add dynamic port discovery for system.peers\_v2.
+- [documentation] JAVA-1810: Note which setters are not propagated to PreparedStatement.
+- [bug] JAVA-1944: Surface Read and WriteFailureException to RetryPolicy.
+- [bug] JAVA-1211: Fix NPE in cluster close when cluster init fails.
+- [bug] JAVA-1220: Fail fast on cluster init if previous init failed.
+- [bug] JAVA-1929: Preempt session execute queries if session was closed.
 
 Merged from 3.5.x:
 

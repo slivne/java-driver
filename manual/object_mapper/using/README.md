@@ -28,9 +28,9 @@ Mapper<User> mapper = manager.mapper(User.class);
 calling `manager#mapper` more than once for the same class will return
 the previously generated mapper.
 
-[Mapper]:http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/mapping/Mapper.html
-[MappingManager]:http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/mapping/MappingManager.html
-[Session]:http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/core/Session.html
+[Mapper]:http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/mapping/Mapper.html
+[MappingManager]:http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/mapping/MappingManager.html
+[Session]:http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/core/Session.html
 
 #### Basic CRUD operations
 
@@ -51,8 +51,8 @@ UUID userId = ...;
 User u = mapper.get(userId);
 ```
 
-`get`'s arguments must match the partition key components (number of
-arguments and their types).
+`get`'s arguments must match the primary key components (number of
+arguments, their types, and order).
 
 --------------
 
@@ -179,7 +179,7 @@ It provides methods `one()`, `all()`, `iterator()`, `getExecutionInfo()`
 and `isExhausted()`. Note that iterating the `Result` will consume the
 `ResultSet`, and vice-versa.
 
-[Result]: http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/mapping/Result.html
+[Result]: http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/mapping/Result.html
 
 ### Accessors
 
@@ -202,7 +202,7 @@ implementation for it:
 
 ```java
 UserAccessor userAccessor = manager.createAccessor(UserAccessor.class);
-User user = userAccessor.getOne(uuid);
+Result<User> users = userAccessor.getAll();
 ```
 
 Like mappers, accessors are cached at the manager level and thus, are
@@ -229,7 +229,7 @@ corresponds to which marker:
 ResultSet insert(@Param("u") UUID userId, @Param("n") String name);
 ```
 
-[param]:http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/mapping/annotations/Param.html
+[param]:http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/mapping/annotations/Param.html
 
 If a method argument is a Java enumeration, it must be annotated with
 `@Enumerated` to indicate how to convert it to a CQL type (the rules are
@@ -275,6 +275,10 @@ executed:
       <td><code>ListenableFuture&lt;Result&lt;T&gt;&gt;</code></td>
       <td><code>T</code> must be a mapped class.<br/>Asynchronous execution, returns a list of mapped objects.</td>
     </tr>
+    <tr>
+      <td><code>Statement</code></td>
+      <td>Object mapper doesn't execute query, but returns an instance of <code>BoundStatement</code> that could be executed via <code>Session</code> object. </td>
+    </tr>
 </table>
 
 Example:
@@ -297,7 +301,7 @@ query with the annotation [@QueryParameters]. Then, options like
 public ListenableFuture<Result<User>> getAllAsync();
 ```
 
-[@QueryParameters]: http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/mapping/annotations/QueryParameters.html
+[@QueryParameters]: http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/mapping/annotations/QueryParameters.html
 
 
 ### Mapping configuration
@@ -341,6 +345,6 @@ PropertyMapper propertyMapper = new DefaultPropertyMapper()
 There is more to `DefaultPropertyMapper`; see the Javadocs and implementation for details.
 
 
-[MappingConfiguration]: http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/mapping/MappingConfiguration.html
-[PropertyMapper]: http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/mapping/PropertyMapper.html
-[DefaultPropertyMapper]: http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/mapping/DefaultPropertyMapper.html
+[MappingConfiguration]: http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/mapping/MappingConfiguration.html
+[PropertyMapper]: http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/mapping/PropertyMapper.html
+[DefaultPropertyMapper]: http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/mapping/DefaultPropertyMapper.html

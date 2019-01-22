@@ -3,6 +3,21 @@
 The purpose of this guide is to detail changes made by successive
 versions of the Java driver.
 
+### 3.6.0
+
+1.  `ConsistencyLevel.LOCAL_SERIAL.isDCLocal()` now returns true. In driver
+    code, `isDCLocal()` is only used when evaluating a Statement's
+    ConsistencyLevel (which does not include Serial CLs), but as a matter of
+    correctness this was updated.
+
+2.  `ReadFailureException` and `WriteFailureException` are now surfaced to
+    `RetryPolicy.onRequestError`. Consider updating custom `RetryPolicy`
+    implementations to account for this. In the general case, we recommend
+    using `RetryDecision.rethrow()`, see [JAVA-1944].
+
+[JAVA-1944]: https://datastax-oss.atlassian.net/browse/JAVA-1944
+
+
 ### 3.5.0
 
 1.  The `DowngradingConsistencyRetryPolicy` is now deprecated, see [JAVA-1752]. 
@@ -62,6 +77,15 @@ versions of the Java driver.
 `Iterable` as input rather than just `List`. This should have no impact unless
 you were accessing these methods using reflection in which case you need to
 account for these new parameter types.
+
+
+### 3.3.1
+
+Speculative executions can now be scheduled without delay: if
+`SpeculativeExecutionPlan.nextExecution()` returns 0, the next execution will be fired immediately.
+This allows aggressive policies that hit multiple replicas right away, in order to get the fastest
+response possible. Note that this may break existing policies that used 0 to mean "no execution";
+make sure you use a negative value instead.
 
 
 ### 3.2.0

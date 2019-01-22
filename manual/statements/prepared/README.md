@@ -122,10 +122,10 @@ BoundStatement bound = ps1.bind()
 
 // Using the unset method to unset previously set value.
 // Positional setter:
-bound.unset("description");
+bound.unset(1);
 
 // Named setter:
-bound.unset(1);
+bound.unset("description");
 ```
 
 A bound statement also has getters to retrieve the values. Note that
@@ -256,11 +256,11 @@ relying on `SELECT *`.
 This will be addressed in a future release of both Cassandra and the driver.  Follow
 [CASSANDRA-10786] and [JAVA-1196] for more information.
 
-[PreparedStatement]:    http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/core/PreparedStatement.html
-[BoundStatement]:       http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/core/BoundStatement.html
-[setPrepareOnAllHosts]: http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/core/QueryOptions.html#setPrepareOnAllHosts-boolean-
-[setReprepareOnUp]:     http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/core/QueryOptions.html#setReprepareOnUp-boolean-
-[execute]:              http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/core/Session.html#execute-com.datastax.driver.core.Statement-
-[executeAsync]:         http://docs.datastax.com/en/drivers/java/3.5/com/datastax/driver/core/Session.html#executeAsync-com.datastax.driver.core.Statement-
+[PreparedStatement]:    http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/core/PreparedStatement.html
+[BoundStatement]:       http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/core/BoundStatement.html
+[setPrepareOnAllHosts]: http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/core/QueryOptions.html#setPrepareOnAllHosts-boolean-
+[setReprepareOnUp]:     http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/core/QueryOptions.html#setReprepareOnUp-boolean-
+[execute]:              http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/core/Session.html#execute-com.datastax.driver.core.Statement-
+[executeAsync]:         http://docs.datastax.com/en/drivers/java/3.6/com/datastax/driver/core/Session.html#executeAsync-com.datastax.driver.core.Statement-
 [CASSANDRA-10786]:      https://issues.apache.org/jira/browse/CASSANDRA-10786
 [JAVA-1196]:            https://datastax-oss.atlassian.net/browse/JAVA-1196
