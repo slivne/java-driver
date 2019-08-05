@@ -2687,19 +2687,26 @@ public class Cluster implements Closeable {
         }
 
         private class SchemaRefreshRequestDeliveryCallback implements EventDebouncer.DeliveryCallback<SchemaRefreshRequest> {
-
             @Override
             public ListenableFuture<?> deliver(final List<SchemaRefreshRequest> events) {
                 return executor.submit(new ExceptionCatchingRunnable() {
                     @Override
                     public void runMayThrow() throws InterruptedException, ExecutionException {
-                        SchemaRefreshRequest coalesced = null;
-                        for (SchemaRefreshRequest request : events) {
-                            coalesced = coalesced == null ? request : coalesced.coalesce(request);
+                        if (schemaRefreshRequestDebouncer.maxPendingEvents() > 1) {
+                            SchemaRefreshRequest coalesced = null;
+                            for (SchemaRefreshRequest request : events) {
+                                coalesced = coalesced == null ? request : coalesced.coalesce(request);
+                            }
+                            assert coalesced != null;
+                            logger.trace("Coalesced schema refresh request: {}", coalesced);
+                            controlConnection.refreshSchema(coalesced.targetType, coalesced.targetKeyspace, coalesced.targetName, coalesced.targetSignature);
                         }
-                        assert coalesced != null;
-                        logger.trace("Coalesced schema refresh request: {}", coalesced);
-                        controlConnection.refreshSchema(coalesced.targetType, coalesced.targetKeyspace, coalesced.targetName, coalesced.targetSignature);
+                        else {
+                            for (SchemaRefreshRequest request : events) {
+                                logger.trace("Schema refresh request: {}", request);
+                                controlConnection.refreshSchema(request.targetType, request.targetKeyspace, request.targetName, request.targetSignature);
+                            }
+                        }
                     }
                 });
             }
